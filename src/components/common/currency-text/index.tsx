@@ -10,6 +10,9 @@ export interface CurrencyTextProps {
   style?: StyleProp<TextStyle>;
   colored?: boolean;
   showSign?: boolean;
+  numberOfLines?: number;
+  adjustsFontSizeToFit?: boolean;
+  minimumFontScale?: number;
 }
 
 export const CurrencyText: React.FC<CurrencyTextProps> = ({
@@ -18,12 +21,19 @@ export const CurrencyText: React.FC<CurrencyTextProps> = ({
   style,
   colored = false,
   showSign = false,
+  numberOfLines,
+  adjustsFontSizeToFit,
+  minimumFontScale,
 }) => {
   const { theme } = useTheme();
   const isBalanceHidden = useUIStore((state) => state.isBalanceHidden);
 
   if (isBalanceHidden) {
-    return <Text style={[{ color: theme.colors.textPrimary }, style]}>••••••••</Text>;
+    return (
+      <Text numberOfLines={numberOfLines} style={[{ color: theme.colors.textPrimary }, style]}>
+        ••••••••
+      </Text>
+    );
   }
 
   const formatted = formatCurrency(amount, currencyCode);
@@ -36,7 +46,12 @@ export const CurrencyText: React.FC<CurrencyTextProps> = ({
   }
 
   return (
-    <Text style={[{ color }, style]}>
+    <Text
+      numberOfLines={numberOfLines}
+      adjustsFontSizeToFit={adjustsFontSizeToFit}
+      minimumFontScale={minimumFontScale}
+      style={[{ color }, style]}
+    >
       {sign}
       {formatted}
     </Text>

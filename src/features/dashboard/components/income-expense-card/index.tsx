@@ -18,21 +18,33 @@ export const IncomeExpenseCard: React.FC<IncomeExpenseCardProps> = ({ income, ex
       <GlassCard style={styles.card}>
         <View style={styles.header}>
           <View style={[styles.iconBox, { backgroundColor: theme.colors.successBg }]}>
-            <ArrowDownLeft size={16} color={theme.colors.success} />
+            <ArrowDownLeft size={15} color={theme.colors.success} />
           </View>
           <Text style={[styles.label, { color: theme.colors.textSecondary }]}>Pemasukan</Text>
         </View>
-        <CurrencyText amount={income} style={styles.amount} />
+        <CurrencyText
+          amount={income}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.7}
+          style={styles.amount}
+        />
       </GlassCard>
 
       <GlassCard style={styles.card}>
         <View style={styles.header}>
           <View style={[styles.iconBox, { backgroundColor: theme.colors.dangerBg }]}>
-            <ArrowUpRight size={16} color={theme.colors.danger} />
+            <ArrowUpRight size={15} color={theme.colors.danger} />
           </View>
           <Text style={[styles.label, { color: theme.colors.textSecondary }]}>Pengeluaran</Text>
         </View>
-        <CurrencyText amount={expense} style={styles.amount} />
+        <CurrencyText
+          amount={expense}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.7}
+          style={styles.amount}
+        />
       </GlassCard>
     </View>
   );
@@ -46,7 +58,8 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
   },
   header: {
     flexDirection: 'row',
@@ -54,19 +67,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   iconBox: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
+    marginRight: 6,
   },
   label: {
     fontSize: 12,
     fontWeight: '500',
   },
   amount: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
   },
 });

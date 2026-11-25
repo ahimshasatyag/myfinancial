@@ -1,23 +1,23 @@
-import React from 'react';
-import { ScrollView, RefreshControl, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Bell, User } from 'lucide-react-native';
+import React from 'react';
+import { RefreshControl, ScrollView, View } from 'react-native';
+import { EmptyState } from '../../../components/common/empty-state';
+import { ErrorState } from '../../../components/common/error-state';
 import { ScreenContainer } from '../../../components/layout/screen-container';
 import { ScreenHeader } from '../../../components/layout/screen-header';
 import { HeaderActions } from '../../../components/navigation/header-actions';
 import { GlassCard } from '../../../components/ui/glass-card';
-import { EmptyState } from '../../../components/common/empty-state';
-import { ErrorState } from '../../../components/common/error-state';
+import { ROUTES } from '../../../constants/routes';
+import { useAuth } from '../../../providers/auth-provider';
+import { useTheme } from '../../../providers/theme-provider';
 import { BalanceCard } from '../components/balance-card';
+import { CashFlowSection } from '../components/cash-flow-section';
 import { IncomeExpenseCard } from '../components/income-expense-card';
 import { QuickActions } from '../components/quick-actions';
-import { CashFlowSection } from '../components/cash-flow-section';
 import { RecentTransactions } from '../components/recent-transactions';
 import { SpendingInsight } from '../components/spending-insight';
 import { useDashboard } from '../hooks/use-dashboard';
-import { useAuth } from '../../../providers/auth-provider';
-import { useTheme } from '../../../providers/theme-provider';
-import { ROUTES } from '../../../constants/routes';
 
 export const DashboardScreen: React.FC = () => {
   const router = useRouter();
@@ -70,7 +70,7 @@ export const DashboardScreen: React.FC = () => {
         ) : null}
 
         <BalanceCard
-          totalBalance={data?.totalBalance || 0}
+          totalBalance={data?.netCashFlow ?? data?.totalBalance ?? 0}
           currencyCode={data?.primaryCurrency || 'IDR'}
           balancesByCurrency={data?.balancesByCurrency || []}
           onAddTransaction={() => router.push(ROUTES.TRANSACTIONS.NEW as any)}
@@ -92,7 +92,12 @@ export const DashboardScreen: React.FC = () => {
           expense={data?.monthlyExpense || 0}
         />
         <QuickActions />
-        <CashFlowSection netCashFlow={data?.netCashFlow || 0} />
+        <CashFlowSection
+          netCashFlow={data?.netCashFlow || 0}
+          monthlyIncome={data?.monthlyIncome || 0}
+          monthlyExpense={data?.monthlyExpense || 0}
+          chartData={data?.weeklyCashFlow || []}
+        />
         <SpendingInsight
           income={data?.monthlyIncome || 0}
           expense={data?.monthlyExpense || 0}
