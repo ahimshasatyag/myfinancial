@@ -1,0 +1,106 @@
+import React from 'react';
+import { ScrollView, RefreshControl, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Bell, User } from 'lucide-react-native';
+import { ScreenContainer } from '../../../components/layout/screen-container';
+import { ScreenHeader } from '../../../components/layout/screen-header';
+import { HeaderActions } from '../../../components/navigation/header-actions';
+import { GlassCard } from '../../../components/ui/glass-card';
+import { EmptyState } from '../../../components/common/empty-state';
+import { ErrorState } from '../../../components/common/error-state';
+import { BalanceCard } from '../components/balance-card';
+import { IncomeExpenseCard } from '../components/income-expense-card';
+import { QuickActions } from '../components/quick-actions';
+import { CashFlowSection } from '../components/cash-flow-section';
+import { RecentTransactions } from '../components/recent-transactions';
+import { SpendingInsight } from '../components/spending-insight';
+import { useDashboard } from '../hooks/use-dashboard';
+import { useAuth } from '../../../providers/auth-provider';
+import { useTheme } from '../../../providers/theme-provider';
+import { ROUTES } from '../../../constants/routes';
+
+export const DashboardScreen: React.FC = () => {
+  const router = useRouter();
+  const { profile } = useAuth();
+  const { theme } = useTheme();
+  const { data, isLoading, isError, error, refetch } = useDashboard();
+
+  const greeting = profile?.full_name ? `Halo, ${profile.full_name}` : 'Budgetku';
+  const hasNoAccounts = !isLoading && data && data.accountBalances.length === 0;
+
+  return (
+    <ScreenContainer>
+      <ScreenHeader
+        title={greeting}
+        subtitle="Ringkasan finansial Anda"
+        rightAction={
+          <HeaderActions
+            actions={[
+              {
+                icon: <Bell size={18} color={theme.colors.textPrimary} />,
+                onPress: () => router.push(ROUTES.SETTINGS.NOTIFICATIONS as any),
+              },
+              {
+                icon: <User size={18} color={theme.colors.textPrimary} />,
+                onPress: () => router.push(ROUTES.PROFILE.INDEX as any),
+              },
+            ]}
+          />
+        }
+      />
+      <ScrollView
+        contentContainerStyle={{ padding: 16 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={() => {
+              refetch();
+            }}
+          />
+        }
+      >
+        {isError ? (
+          <GlassCard style={{ marginBottom: 16 }}>
+            <ErrorState
+              message={(error as Error)?.message || 'Gagal memuat ringkasan dashboard.'}
+              onRetry={() => refetch()}
+            />
+          </GlassCard>
+        ) : null}
+
+        <BalanceCard
+          totalBalance={data?.totalBalance || 0}
+          currencyCode={data?.primaryCurrency || 'IDR'}
+          balancesByCurrency={data?.balancesByCurrency || []}
+          onAddTransaction={() => router.push(ROUTES.TRANSACTIONS.NEW as any)}
+        />
+
+        {hasNoAccounts ? (
+          <GlassCard style={{ marginBottom: 16 }}>
+            <EmptyState
+              title="Mulai dengan Menambah Akun"
+              description="Tambahkan rekening bank, dompet tunai, atau e-wallet pertama Anda agar saldo dapat dihitung otomatis."
+              actionTitle="Tambah Akun Pertama"
+              onAction={() => router.push(ROUTES.ACCOUNTS.NEW as any)}
+            />
+          </GlassCard>
+        ) : null}
+
+        <IncomeExpenseCard
+          income={data?.monthlyIncome || 0}
+          expense={data?.monthlyExpense || 0}
+        />
+        <QuickActions />
+        <CashFlowSection netCashFlow={data?.netCashFlow || 0} />
+        <SpendingInsight
+          income={data?.monthlyIncome || 0}
+          expense={data?.monthlyExpense || 0}
+          transactionCount={data?.monthlyTransactionCount || 0}
+        />
+        <RecentTransactions transactions={data?.recentTransactions || []} />
+        <View className="h-20" />
+      </ScrollView>
+    </ScreenContainer>
+  );
+};
