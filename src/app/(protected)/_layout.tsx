@@ -1,6 +1,5 @@
-import React from 'react';
-import { Stack, Redirect } from 'expo-router';
-import { View, ActivityIndicator } from 'react-native';
+import { Redirect, Stack } from 'expo-router';
+import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from '../../providers/auth-provider';
 import { useTheme } from '../../providers/theme-provider';
 
@@ -32,14 +31,10 @@ export default function ProtectedLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="transactions" />
-      <Stack.Screen name="accounts" />
-      <Stack.Screen name="categories" />
-      <Stack.Screen name="budgets" />
-      <Stack.Screen name="savings" />
-      <Stack.Screen name="recurring" />
-      <Stack.Screen name="profile" />
-      <Stack.Screen name="settings" />
-      <Stack.Screen name="modals" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="modals/account-picker" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="modals/category-picker" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="modals/date-picker" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="modals/transaction-filter" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }

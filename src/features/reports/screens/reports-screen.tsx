@@ -10,6 +10,7 @@ import { GlassCard } from '../../../components/ui/glass-card';
 import { useTheme } from '../../../providers/theme-provider';
 import { useReports } from '../hooks/useReports';
 import { MonthlyActivityCalendar } from '../components/monthly-activity-calendar';
+import { SpendingProgressCard } from '../components/spending-progress-card';
 import { formatCalendarAmount } from '../services/reportService';
 
 export const ReportsScreen: React.FC = () => {
@@ -63,7 +64,15 @@ export const ReportsScreen: React.FC = () => {
           />
         }
       >
-        {/* 1. Kalender Aktivitas Bulan Ini */}
+        {/* 1. Progres Pengeluaran (Sebelum Aktivitas Bulan Ini) */}
+        <SpendingProgressCard
+          currentDate={selectedDate}
+          totalIncome={report?.cashFlow.total_income || 0}
+          totalExpense={totalExpense}
+          categorySpend={report?.categorySpend || []}
+        />
+
+        {/* 2. Kalender Aktivitas Bulan Ini */}
         <MonthlyActivityCalendar
           currentDate={selectedDate}
           onChangeDate={(newDate) => setSelectedDate(newDate)}

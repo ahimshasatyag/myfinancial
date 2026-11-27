@@ -23,11 +23,6 @@ export const QUERY_KEYS = {
     LIST: (type?: string) => ['categories', 'list', type],
     DETAIL: (id: string) => ['categories', 'detail', id],
   },
-  BUDGETS: {
-    LIST: ['budgets', 'list'],
-    PROGRESS: ['budgets', 'progress'],
-    DETAIL: (id: string) => ['budgets', 'detail', id],
-  },
   SAVINGS: {
     LIST: ['savings', 'list'],
     PROGRESS: ['savings', 'progress'],
@@ -36,6 +31,14 @@ export const QUERY_KEYS = {
   RECURRING: {
     LIST: ['recurring', 'list'],
     DETAIL: (id: string) => ['recurring', 'detail', id],
+  },
+  DEBTS: {
+    LIST: ['debts', 'list'],
+    DETAIL: (id: string) => ['debts', 'detail', id],
+  },
+  INVESTMENTS: {
+    LIST: ['investments', 'list'],
+    DETAIL: (id: string) => ['investments', 'detail', id],
   },
   REPORTS: {
     MONTHLY: (month: string) => ['reports', 'monthly', month],

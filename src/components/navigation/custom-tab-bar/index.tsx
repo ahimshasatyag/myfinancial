@@ -5,9 +5,9 @@ import {
   BarChart3,
   Home,
   LayoutDashboard,
-  PieChart,
   Search,
   Settings,
+  Target,
 } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -127,8 +127,8 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
       case 'transactions':
         return <ArrowLeftRight size={size} color={color} strokeWidth={isFocused ? 2.4 : 2} />;
 
-      case 'budgets':
-        return <PieChart size={size} color={color} strokeWidth={isFocused ? 2.4 : 2} />;
+      case 'goals':
+        return <Target size={size} color={color} strokeWidth={isFocused ? 2.4 : 2} />;
 
       case 'reports':
         return <BarChart3 size={size} color={color} strokeWidth={isFocused ? 2.4 : 2} />;
@@ -152,8 +152,8 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
         return 'Search';
       case 'transactions':
         return 'Transaksi';
-      case 'budgets':
-        return 'Anggaran';
+      case 'goals':
+        return 'Goals';
       case 'reports':
         return 'Laporan';
       case 'settings':

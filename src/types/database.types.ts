@@ -10,7 +10,6 @@ export type TransactionType = 'income' | 'expense';
 export type AccountType = 'cash' | 'bank' | 'e_wallet' | 'credit_card' | 'investment' | 'other';
 export type PaymentMethod = 'cash' | 'debit_card' | 'credit_card' | 'bank_transfer' | 'qris' | 'e_wallet' | 'other';
 export type TransactionStatus = 'pending' | 'completed' | 'cancelled';
-export type BudgetPeriodType = 'weekly' | 'monthly' | 'yearly' | 'custom';
 export type GoalStatus = 'active' | 'completed' | 'paused' | 'cancelled';
 export type GoalTransferAction = 'contribution' | 'withdrawal';
 export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
@@ -299,79 +298,6 @@ export interface Database {
           updated_at?: string;
         };
       };
-      budgets: {
-        Row: {
-          id: string;
-          user_id: string;
-          name: string;
-          period_type: BudgetPeriodType;
-          period_start: string;
-          period_end: string;
-          total_amount: number;
-          currency_code: string;
-          rollover_enabled: boolean;
-          is_active: boolean;
-          notes: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          name: string;
-          period_type?: BudgetPeriodType;
-          period_start: string;
-          period_end: string;
-          total_amount: number;
-          currency_code?: string;
-          rollover_enabled?: boolean;
-          is_active?: boolean;
-          notes?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          name?: string;
-          period_type?: BudgetPeriodType;
-          period_start?: string;
-          period_end?: string;
-          total_amount?: number;
-          currency_code?: string;
-          rollover_enabled?: boolean;
-          is_active?: boolean;
-          notes?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      budget_categories: {
-        Row: {
-          id: string;
-          user_id: string;
-          budget_id: string;
-          category_id: string;
-          limit_amount: number;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          budget_id: string;
-          category_id: string;
-          limit_amount: number;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          budget_id?: string;
-          category_id?: string;
-          limit_amount?: number;
-          created_at?: string;
-        };
-      };
       savings_goals: {
         Row: {
           id: string;
@@ -629,20 +555,6 @@ export interface Database {
           total_spend: number;
         };
       };
-      budget_progress: {
-        Row: {
-          budget_id: string;
-          user_id: string;
-          budget_name: string;
-          period_type: BudgetPeriodType;
-          period_start: string;
-          period_end: string;
-          total_budget: number;
-          total_spent: number;
-          remaining_amount: number;
-          percentage_used: number;
-        };
-      };
       savings_goal_progress: {
         Row: {
           goal_id: string;
@@ -666,10 +578,7 @@ export type Account = Database['public']['Tables']['accounts']['Row'];
 export type Category = Database['public']['Tables']['categories']['Row'];
 export type Transaction = Database['public']['Tables']['transactions']['Row'];
 export type AccountTransfer = Database['public']['Tables']['account_transfers']['Row'];
-export type Budget = Database['public']['Tables']['budgets']['Row'];
-export type BudgetCategory = Database['public']['Tables']['budget_categories']['Row'];
 export type SavingsGoal = Database['public']['Tables']['savings_goals']['Row'];
 export type RecurringTransaction = Database['public']['Tables']['recurring_transactions']['Row'];
 export type AccountBalanceView = Database['public']['Views']['account_balances']['Row'];
-export type BudgetProgressView = Database['public']['Views']['budget_progress']['Row'];
 export type SavingsGoalProgressView = Database['public']['Views']['savings_goal_progress']['Row'];

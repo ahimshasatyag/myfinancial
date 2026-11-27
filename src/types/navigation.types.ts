@@ -17,7 +17,7 @@ export type AuthStackParamList = {
 export type TabsParamList = {
   index: undefined;          // Dashboard
   transactions: undefined;   // Transaction list
-  budgets: undefined;        // Budgets overview
+  goals: undefined;          // Goals overview
   reports: undefined;        // Reports & Analytics
   settings: undefined;       // App Settings
 };

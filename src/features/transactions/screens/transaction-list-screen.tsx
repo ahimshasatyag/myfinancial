@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Plus, Search } from 'lucide-react-native';
+import { Search } from 'lucide-react-native';
 import { ScreenContainer } from '../../../components/layout/screen-container';
 import { ScreenHeader } from '../../../components/layout/screen-header';
-import { HeaderActions } from '../../../components/navigation/header-actions';
+import { FabButton } from '../../../components/ui/fab-button';
 import { GlassInput } from '../../../components/ui/glass-input';
 import { ROUTES } from '../../../constants/routes';
 import { useDebounce } from '../../../hooks/use-debounce';
@@ -43,19 +43,7 @@ export const TransactionListScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <ScreenHeader
-        title="Aktivitas Transaksi"
-        rightAction={
-          <HeaderActions
-            actions={[
-              {
-                icon: <Plus size={20} color={theme.colors.textPrimary} />,
-                onPress: () => router.push(ROUTES.TRANSACTIONS.NEW as any),
-              },
-            ]}
-          />
-        }
-      />
+      <ScreenHeader title="Aktivitas Transaksi" />
       <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 6 }}>
         <GlassInput
           placeholder="Cari judul atau merchant..."
@@ -88,6 +76,12 @@ export const TransactionListScreen: React.FC = () => {
           errorMessage={(error as Error)?.message}
         />
       </View>
+
+      <FabButton
+        hasTabBar
+        accessibilityLabel="Tambah transaksi baru"
+        onPress={() => router.push(ROUTES.TRANSACTIONS.NEW as any)}
+      />
     </ScreenContainer>
   );
 };

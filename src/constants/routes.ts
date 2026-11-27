@@ -9,7 +9,7 @@ export const ROUTES = {
   TABS: {
     DASHBOARD: '/(protected)/(tabs)',
     TRANSACTIONS: '/(protected)/(tabs)/transactions',
-    BUDGETS: '/(protected)/(tabs)/budgets',
+    GOALS: '/(protected)/(tabs)/goals',
     REPORTS: '/(protected)/(tabs)/reports',
     SETTINGS: '/(protected)/(tabs)/settings',
   },
@@ -30,10 +30,6 @@ export const ROUTES = {
     NEW: '/(protected)/categories/new',
     DETAIL: (id: string) => `/(protected)/categories/${id}` as const,
   },
-  BUDGETS: {
-    NEW: '/(protected)/budgets/new',
-    DETAIL: (id: string) => `/(protected)/budgets/${id}` as const,
-  },
   SAVINGS: {
     LIST: '/(protected)/savings',
     NEW: '/(protected)/savings/new',
@@ -43,6 +39,16 @@ export const ROUTES = {
     LIST: '/(protected)/recurring',
     NEW: '/(protected)/recurring/new',
     DETAIL: (id: string) => `/(protected)/recurring/${id}` as const,
+  },
+  INVESTMENTS: {
+    LIST: '/(protected)/investments',
+    NEW: '/(protected)/investments/new',
+    DETAIL: (id: string) => `/(protected)/investments/${id}` as const,
+  },
+  DEBTS: {
+    LIST: '/(protected)/debts',
+    NEW: '/(protected)/debts/new',
+    DETAIL: (id: string) => `/(protected)/debts/${id}` as const,
   },
   PROFILE: {
     INDEX: '/(protected)/profile',

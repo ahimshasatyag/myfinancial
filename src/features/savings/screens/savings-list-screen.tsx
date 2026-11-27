@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { View, FlatList, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Plus, Target } from 'lucide-react-native';
 import { ScreenContainer } from '../../../components/layout/screen-container';
@@ -21,7 +21,7 @@ export const SavingsListScreen: React.FC = () => {
   return (
     <ScreenContainer>
       <ScreenHeader
-        title="Target Tabungan"
+        title="Goals"
         showBack
         rightAction={
           <HeaderActions
@@ -34,14 +34,14 @@ export const SavingsListScreen: React.FC = () => {
           />
         }
       />
-      <View style={styles.content}>
+      <View className="flex-1 p-4">
         {goals?.length === 0 ? (
           <GlassCard>
             <EmptyState
               icon={<Target size={36} color={theme.colors.textMuted} />}
-              title="Belum ada target tabungan"
-              description="Tetapkan impian tabungan Anda dan pantau progres pencapaiannya."
-              actionTitle="Tambah Target"
+              title="Belum ada goals"
+              description="Tetapkan target finansial Anda dan pantau progres pencapaiannya."
+              actionTitle="Buat Goal Baru"
               onAction={() => router.push(ROUTES.SAVINGS.NEW as any)}
             />
           </GlassCard>
@@ -49,34 +49,57 @@ export const SavingsListScreen: React.FC = () => {
           <FlatList
             data={goals || []}
             keyExtractor={(item) => item.goal_id}
-            onRefresh={refetch}
+            onRefresh={() => {
+              refetch();
+            }}
             refreshing={isLoading}
+            showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <GlassCard style={styles.card}>
-                <View style={styles.topRow}>
-                  <Text style={[styles.name, { color: theme.colors.textPrimary }]}>
-                    {item.goal_name}
-                  </Text>
-                  <Text style={[styles.percent, { color: theme.colors.textSecondary }]}>
-                    {Math.round(item.percentage_completed || 0)}%
-                  </Text>
-                </View>
-                <ProgressChart
-                  percentage={item.percentage_completed || 0}
-                  height={8}
-                  style={styles.progress}
-                />
-                <View style={styles.bottomRow}>
-                  <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
-                    Terkumpul:{' '}
-                    <CurrencyText amount={Number(item.current_saved || 0)} style={styles.bold} />
-                  </Text>
-                  <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
-                    Target:{' '}
-                    <CurrencyText amount={Number(item.target_amount || 0)} style={styles.bold} />
-                  </Text>
-                </View>
-              </GlassCard>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => router.push(ROUTES.SAVINGS.DETAIL(item.goal_id) as any)}
+              >
+                <GlassCard style={{ marginBottom: 14 }} contentStyle={{ padding: 18 }}>
+                  <View className="flex-row justify-between items-center mb-2.5">
+                    <Text
+                      className="text-[16px] font-semibold flex-1 mr-2"
+                      style={{ color: theme.colors.textPrimary }}
+                      numberOfLines={1}
+                    >
+                      {item.name}
+                    </Text>
+                    <Text
+                      className="text-[14px] font-semibold"
+                      style={{ color: theme.colors.textSecondary }}
+                    >
+                      {Math.round(item.progress_percentage || 0)}%
+                    </Text>
+                  </View>
+
+                  <ProgressChart
+                    percentage={item.progress_percentage || 0}
+                    height={8}
+                    style={{ marginBottom: 12 }}
+                  />
+
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-[12px]" style={{ color: theme.colors.textSecondary }}>
+                      Terkumpul:{' '}
+                      <CurrencyText
+                        amount={Number(item.saved_amount || 0)}
+                        style={{ fontWeight: '600' }}
+                      />
+                    </Text>
+                    <Text className="text-[12px]" style={{ color: theme.colors.textSecondary }}>
+                      Target:{' '}
+                      <CurrencyText
+                        amount={Number(item.target_amount || 0)}
+                        style={{ fontWeight: '600' }}
+                      />
+                    </Text>
+                  </View>
+                </GlassCard>
+              </TouchableOpacity>
             )}
           />
         )}
@@ -84,40 +107,3 @@ export const SavingsListScreen: React.FC = () => {
     </ScreenContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  card: {
-    padding: 18,
-    marginBottom: 14,
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  percent: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  progress: {
-    marginBottom: 12,
-  },
-  bottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  label: {
-    fontSize: 12,
-  },
-  bold: {
-    fontWeight: '600',
-  },
-});

@@ -11,9 +11,9 @@ import { GlassCard } from '../../../components/ui/glass-card';
 import { ROUTES } from '../../../constants/routes';
 import { useAuth } from '../../../providers/auth-provider';
 import { useTheme } from '../../../providers/theme-provider';
+import { useSavings } from '../../savings/hooks/useSavings';
 import { BalanceCard } from '../components/balance-card';
-import { CashFlowSection } from '../components/cash-flow-section';
-import { IncomeExpenseCard } from '../components/income-expense-card';
+import { GoalsPreview } from '../components/goals-preview';
 import { QuickActions } from '../components/quick-actions';
 import { RecentTransactions } from '../components/recent-transactions';
 import { SpendingInsight } from '../components/spending-insight';
@@ -24,6 +24,7 @@ export const DashboardScreen: React.FC = () => {
   const { profile } = useAuth();
   const { theme } = useTheme();
   const { data, isLoading, isError, error, refetch } = useDashboard();
+  const { data: goals, isLoading: isGoalsLoading, refetch: refetchGoals } = useSavings();
 
   const greeting = profile?.full_name ? `Halo, ${profile.full_name}` : 'Budgetku';
   const hasNoAccounts = !isLoading && data && data.accountBalances.length === 0;
@@ -53,9 +54,10 @@ export const DashboardScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={isLoading}
+            refreshing={isLoading || isGoalsLoading}
             onRefresh={() => {
               refetch();
+              refetchGoals();
             }}
           />
         }
@@ -71,6 +73,8 @@ export const DashboardScreen: React.FC = () => {
 
         <BalanceCard
           totalBalance={data?.netCashFlow ?? data?.totalBalance ?? 0}
+          income={data?.monthlyIncome || 0}
+          expense={data?.monthlyExpense || 0}
           currencyCode={data?.primaryCurrency || 'IDR'}
           balancesByCurrency={data?.balancesByCurrency || []}
           onAddTransaction={() => router.push(ROUTES.TRANSACTIONS.NEW as any)}
@@ -87,17 +91,8 @@ export const DashboardScreen: React.FC = () => {
           </GlassCard>
         ) : null}
 
-        <IncomeExpenseCard
-          income={data?.monthlyIncome || 0}
-          expense={data?.monthlyExpense || 0}
-        />
+        <GoalsPreview goals={goals || []} />
         <QuickActions />
-        <CashFlowSection
-          netCashFlow={data?.netCashFlow || 0}
-          monthlyIncome={data?.monthlyIncome || 0}
-          monthlyExpense={data?.monthlyExpense || 0}
-          chartData={data?.weeklyCashFlow || []}
-        />
         <SpendingInsight
           income={data?.monthlyIncome || 0}
           expense={data?.monthlyExpense || 0}

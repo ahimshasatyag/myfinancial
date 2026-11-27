@@ -2,12 +2,12 @@ import { supabase } from '../lib/supabase/client';
 
 export const backupService = {
   async exportUserData(userId: string) {
-    const [accounts, transactions, categories, budgets, savings] = await Promise.all([
+    const [accounts, transactions, categories, goals, goalContributions] = await Promise.all([
       supabase.from('accounts').select('*').eq('user_id', userId),
       supabase.from('transactions').select('*').eq('user_id', userId),
       supabase.from('categories').select('*').eq('user_id', userId),
-      supabase.from('budgets').select('*').eq('user_id', userId),
-      supabase.from('savings_goals').select('*').eq('user_id', userId),
+      (supabase as any).from('goals').select('*').eq('user_id', userId),
+      (supabase as any).from('goal_contributions').select('*').eq('user_id', userId),
     ]);
 
     return {
@@ -16,8 +16,8 @@ export const backupService = {
       accounts: accounts.data || [],
       transactions: transactions.data || [],
       categories: categories.data || [],
-      budgets: budgets.data || [],
-      savings: savings.data || [],
+      goals: goals.data || [],
+      goalContributions: goalContributions.data || [],
     };
   },
 };
