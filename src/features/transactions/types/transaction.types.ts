@@ -1,4 +1,5 @@
 import {
+  AccountType,
   Transaction,
   PaymentMethod,
   TransactionType,
@@ -42,7 +43,7 @@ export interface CreateTransferInput {
 }
 
 export interface TransactionWithDetails extends Transaction {
-  accounts?: { id?: string; name: string; currency_code?: string } | null;
+  accounts?: { id?: string; name: string; account_type?: AccountType; currency_code?: string } | null;
   categories?: { id?: string; name: string; icon?: string | null; transaction_type?: TransactionType } | null;
   account_name?: string;
   category_name?: string;

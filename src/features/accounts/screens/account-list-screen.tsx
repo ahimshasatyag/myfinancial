@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { View, FlatList, TouchableOpacity, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
-  Plus,
   Landmark,
   Wallet,
   CreditCard,
@@ -12,7 +11,7 @@ import {
 } from 'lucide-react-native';
 import { ScreenContainer } from '../../../components/layout/screen-container';
 import { ScreenHeader } from '../../../components/layout/screen-header';
-import { HeaderActions } from '../../../components/navigation/header-actions';
+import { FabButton } from '../../../components/ui/fab-button';
 import { GlassCard } from '../../../components/ui/glass-card';
 import { GlassBadge } from '../../../components/ui/glass-badge';
 import { CurrencyText } from '../../../components/common/currency-text';
@@ -50,20 +49,7 @@ export const AccountListScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <ScreenHeader
-        title="Daftar Akun & Dompet"
-        showBack
-        rightAction={
-          <HeaderActions
-            actions={[
-              {
-                icon: <Plus size={20} color={theme.colors.textPrimary} />,
-                onPress: () => router.push(ROUTES.ACCOUNTS.NEW as any),
-              },
-            ]}
-          />
-        }
-      />
+      <ScreenHeader title="Daftar Akun & Dompet" showBack />
 
       <View className="flex-1 px-4 pt-3">
         {isError ? (
@@ -89,7 +75,7 @@ export const AccountListScreen: React.FC = () => {
             onRefresh={refetch}
             refreshing={isLoading}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 32 }}
+            contentContainerStyle={{ paddingBottom: 96 }}
             ListHeaderComponent={
               totalsByCurrency.length > 0 ? (
                 <GlassCard variant="glass" intensity={50} style={{ marginBottom: 16 }}>
@@ -180,6 +166,11 @@ export const AccountListScreen: React.FC = () => {
           />
         )}
       </View>
+
+      <FabButton
+        accessibilityLabel="Tambah akun baru"
+        onPress={() => router.push(ROUTES.ACCOUNTS.NEW as any)}
+      />
     </ScreenContainer>
   );
 };

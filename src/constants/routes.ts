@@ -14,6 +14,7 @@ export const ROUTES = {
     SETTINGS: '/(protected)/(tabs)/settings',
   },
   TRANSACTIONS: {
+    ALL: '/(protected)/transactions/all',
     NEW: '/(protected)/transactions/new',
     TRANSFER: '/(protected)/transactions/transfer',
     DETAIL: (id: string) => `/(protected)/transactions/${id}` as const,

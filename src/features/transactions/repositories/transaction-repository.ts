@@ -21,7 +21,7 @@ export const transactionRepository = {
 
     let query = (supabase as any)
       .from('transactions')
-      .select('*, accounts(id, name, currency_code), categories(id, name, icon, transaction_type)')
+      .select('*, accounts(id, name, account_type, currency_code), categories(id, name, icon, transaction_type)')
       .eq('user_id', userId);
 
     switch (filters?.sortBy) {
@@ -72,7 +72,7 @@ export const transactionRepository = {
   async getTransactionById(userId: string, id: string): Promise<TransactionWithDetails> {
     const { data, error } = await (supabase as any)
       .from('transactions')
-      .select('*, accounts(id, name, currency_code), categories(id, name, icon, transaction_type)')
+      .select('*, accounts(id, name, account_type, currency_code), categories(id, name, icon, transaction_type)')
       .eq('id', id)
       .eq('user_id', userId)
       .single();

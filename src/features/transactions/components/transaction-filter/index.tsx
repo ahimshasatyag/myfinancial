@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Check, ChevronDown } from 'lucide-react-native';
 import { GlassBottomSheet } from '../../../../components/ui/glass-bottom-sheet';
 import { useTheme } from '../../../../providers/theme-provider';
 
 export type TransactionTypeFilter = 'all' | 'income' | 'expense';
-export type TransactionStatusFilter = 'all' | 'completed' | 'pending' | 'cancelled';
+
+export interface AccountFilterOption {
+  id: string;
+  name: string;
+}
 
 export interface TransactionFilterProps {
   currentType: TransactionTypeFilter;
   onSelectType: (type: TransactionTypeFilter) => void;
-  currentStatus: TransactionStatusFilter;
-  onSelectStatus: (status: TransactionStatusFilter) => void;
+  accounts: AccountFilterOption[];
+  currentAccountId: string;
+  onSelectAccount: (accountId: string) => void;
 }
 
 const typeOptions: { label: string; value: TransactionTypeFilter }[] = [
@@ -25,66 +25,66 @@ const typeOptions: { label: string; value: TransactionTypeFilter }[] = [
   { label: 'Pemasukan', value: 'income' },
 ];
 
-const statusOptions: { label: string; value: TransactionStatusFilter }[] = [
-  { label: 'Semua Status', value: 'all' },
-  { label: 'Selesai', value: 'completed' },
-  { label: 'Pending', value: 'pending' },
-  { label: 'Batal', value: 'cancelled' },
-];
-
 export const TransactionFilter: React.FC<TransactionFilterProps> = ({
   currentType,
   onSelectType,
-  currentStatus,
-  onSelectStatus,
+  accounts,
+  currentAccountId,
+  onSelectAccount,
 }) => {
   const { theme, isDark } = useTheme();
-  const [activeModal, setActiveModal] = useState<'type' | 'status' | null>(null);
+  const [activeModal, setActiveModal] = useState<'type' | 'account' | null>(null);
+
+  const accountOptions = useMemo(
+    () => [
+      { label: 'Semua Akun', value: 'all' },
+      ...accounts.map((acc) => ({ label: acc.name, value: acc.id })),
+    ],
+    [accounts]
+  );
 
   const selectedTypeLabel =
     typeOptions.find((o) => o.value === currentType)?.label || 'Semua Tipe';
-  const selectedStatusLabel =
-    statusOptions.find((o) => o.value === currentStatus)?.label || 'Semua Status';
+  const selectedAccountLabel =
+    accountOptions.find((o) => o.value === currentAccountId)?.label || 'Semua Akun';
 
   const isTypeFiltered = currentType !== 'all';
-  const isStatusFiltered = currentStatus !== 'all';
+  const isAccountFiltered = currentAccountId !== 'all';
 
   return (
     <>
-      <View style={styles.container}>
+      <View className="flex-row gap-2.5 mb-3.5">
         {/* Dropdown 1: Tipe Transaksi */}
         <TouchableOpacity
           activeOpacity={0.75}
           onPress={() => setActiveModal('type')}
-          style={[
-            styles.dropdownBtn,
-            {
-              backgroundColor: isTypeFiltered
-                ? isDark
-                  ? 'rgba(255, 255, 255, 0.12)'
-                  : '#F3F4F6'
-                : isDark
-                ? 'rgba(255, 255, 255, 0.05)'
-                : '#F9FAFB',
-              borderColor: isTypeFiltered
-                ? theme.colors.button
-                : isDark
-                ? 'rgba(255, 255, 255, 0.1)'
-                : 'rgba(0, 0, 0, 0.08)',
-            },
-          ]}
+          className="flex-1 flex-row items-center justify-between px-3 py-2.5 rounded-xl border"
+          style={{
+            backgroundColor: isTypeFiltered
+              ? isDark
+                ? 'rgba(255, 255, 255, 0.12)'
+                : '#F3F4F6'
+              : isDark
+              ? 'rgba(255, 255, 255, 0.05)'
+              : '#F9FAFB',
+            borderColor: isTypeFiltered
+              ? theme.colors.button
+              : isDark
+              ? 'rgba(255, 255, 255, 0.1)'
+              : 'rgba(0, 0, 0, 0.08)',
+          }}
         >
-          <View style={styles.btnContent}>
-            <Text style={[styles.btnLabel, { color: theme.colors.textSecondary }]}>Tipe:</Text>
+          <View className="flex-row items-center gap-1 flex-1 mr-1.5">
+            <Text className="text-[12px] font-medium" style={{ color: theme.colors.textSecondary }}>
+              Tipe:
+            </Text>
             <Text
               numberOfLines={1}
-              style={[
-                styles.btnValue,
-                {
-                  color: isTypeFiltered ? theme.colors.button : theme.colors.textPrimary,
-                  fontWeight: isTypeFiltered ? '700' : '500',
-                },
-              ]}
+              className="text-[12px] shrink"
+              style={{
+                color: isTypeFiltered ? theme.colors.button : theme.colors.textPrimary,
+                fontWeight: isTypeFiltered ? '700' : '500',
+              }}
             >
               {selectedTypeLabel}
             </Text>
@@ -92,41 +92,39 @@ export const TransactionFilter: React.FC<TransactionFilterProps> = ({
           <ChevronDown size={15} color={theme.colors.textSecondary} />
         </TouchableOpacity>
 
-        {/* Dropdown 2: Status Transaksi */}
+        {/* Dropdown 2: Filter Akun */}
         <TouchableOpacity
           activeOpacity={0.75}
-          onPress={() => setActiveModal('status')}
-          style={[
-            styles.dropdownBtn,
-            {
-              backgroundColor: isStatusFiltered
-                ? isDark
-                  ? 'rgba(255, 255, 255, 0.12)'
-                  : '#F3F4F6'
-                : isDark
-                ? 'rgba(255, 255, 255, 0.05)'
-                : '#F9FAFB',
-              borderColor: isStatusFiltered
-                ? theme.colors.button
-                : isDark
-                ? 'rgba(255, 255, 255, 0.1)'
-                : 'rgba(0, 0, 0, 0.08)',
-            },
-          ]}
+          onPress={() => setActiveModal('account')}
+          className="flex-1 flex-row items-center justify-between px-3 py-2.5 rounded-xl border"
+          style={{
+            backgroundColor: isAccountFiltered
+              ? isDark
+                ? 'rgba(255, 255, 255, 0.12)'
+                : '#F3F4F6'
+              : isDark
+              ? 'rgba(255, 255, 255, 0.05)'
+              : '#F9FAFB',
+            borderColor: isAccountFiltered
+              ? theme.colors.button
+              : isDark
+              ? 'rgba(255, 255, 255, 0.1)'
+              : 'rgba(0, 0, 0, 0.08)',
+          }}
         >
-          <View style={styles.btnContent}>
-            <Text style={[styles.btnLabel, { color: theme.colors.textSecondary }]}>Status:</Text>
+          <View className="flex-row items-center gap-1 flex-1 mr-1.5">
+            <Text className="text-[12px] font-medium" style={{ color: theme.colors.textSecondary }}>
+              Akun:
+            </Text>
             <Text
               numberOfLines={1}
-              style={[
-                styles.btnValue,
-                {
-                  color: isStatusFiltered ? theme.colors.button : theme.colors.textPrimary,
-                  fontWeight: isStatusFiltered ? '700' : '500',
-                },
-              ]}
+              className="text-[12px] shrink"
+              style={{
+                color: isAccountFiltered ? theme.colors.button : theme.colors.textPrimary,
+                fontWeight: isAccountFiltered ? '700' : '500',
+              }}
             >
-              {selectedStatusLabel}
+              {selectedAccountLabel}
             </Text>
           </View>
           <ChevronDown size={15} color={theme.colors.textSecondary} />
@@ -138,115 +136,62 @@ export const TransactionFilter: React.FC<TransactionFilterProps> = ({
         visible={activeModal !== null}
         onClose={() => setActiveModal(null)}
       >
-        <View style={styles.sheetHeader}>
-          <Text style={[styles.sheetTitle, { color: theme.colors.textPrimary }]}>
-            {activeModal === 'type' ? 'Pilih Tipe Transaksi' : 'Pilih Status Transaksi'}
+        <View
+          className="pb-3.5 mb-2 border-b"
+          style={{ borderBottomColor: 'rgba(150, 150, 150, 0.2)' }}
+        >
+          <Text className="text-[16px] font-bold" style={{ color: theme.colors.textPrimary }}>
+            {activeModal === 'type' ? 'Pilih Tipe Transaksi' : 'Pilih Akun'}
           </Text>
         </View>
 
-        <View style={styles.optionsList}>
-          {(activeModal === 'type' ? typeOptions : statusOptions).map((opt) => {
-            const isSelected =
-              activeModal === 'type'
-                ? currentType === opt.value
-                : currentStatus === opt.value;
+        <ScrollView className="max-h-72 py-1.5" showsVerticalScrollIndicator={false}>
+          <View className="gap-1">
+            {(activeModal === 'type' ? typeOptions : accountOptions).map((opt) => {
+              const isSelected =
+                activeModal === 'type'
+                  ? currentType === opt.value
+                  : currentAccountId === opt.value;
 
-            return (
-              <TouchableOpacity
-                key={opt.value}
-                activeOpacity={0.7}
-                onPress={() => {
-                  if (activeModal === 'type') {
-                    onSelectType(opt.value as TransactionTypeFilter);
-                  } else {
-                    onSelectStatus(opt.value as TransactionStatusFilter);
+              return (
+                <TouchableOpacity
+                  key={opt.value}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    if (activeModal === 'type') {
+                      onSelectType(opt.value as TransactionTypeFilter);
+                    } else {
+                      onSelectAccount(opt.value);
+                    }
+                    setActiveModal(null);
+                  }}
+                  className="flex-row items-center justify-between py-3 px-3 rounded-[10px]"
+                  style={
+                    isSelected
+                      ? {
+                          backgroundColor: isDark
+                            ? 'rgba(255, 255, 255, 0.08)'
+                            : 'rgba(0, 0, 0, 0.04)',
+                        }
+                      : undefined
                   }
-                  setActiveModal(null);
-                }}
-                style={[
-                  styles.optionRow,
-                  isSelected && {
-                    backgroundColor: isDark
-                      ? 'rgba(255, 255, 255, 0.08)'
-                      : 'rgba(0, 0, 0, 0.04)',
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.optionLabel,
-                    {
+                >
+                  <Text
+                    className="text-[14px]"
+                    style={{
                       color: isSelected ? theme.colors.button : theme.colors.textPrimary,
                       fontWeight: isSelected ? '700' : '500',
-                    },
-                  ]}
-                >
-                  {opt.label}
-                </Text>
-                {isSelected && <Check size={18} color={theme.colors.button} />}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+                    }}
+                  >
+                    {opt.label}
+                  </Text>
+                  {isSelected && <Check size={18} color={theme.colors.button} />}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
       </GlassBottomSheet>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 14,
-  },
-  dropdownBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 9,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  btnContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    flex: 1,
-    marginRight: 6,
-  },
-  btnLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  btnValue: {
-    fontSize: 12,
-    flexShrink: 1,
-  },
-  sheetHeader: {
-    paddingBottom: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(150, 150, 150, 0.2)',
-    marginBottom: 8,
-  },
-  sheetTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  optionsList: {
-    paddingVertical: 6,
-    gap: 4,
-  },
-  optionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-  },
-  optionLabel: {
-    fontSize: 14,
-  },
-});
