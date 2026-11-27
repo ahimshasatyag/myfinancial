@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { ArrowDownLeft, ArrowUpRight } from 'lucide-react-native';
 import { CurrencyText } from '../../../../components/common/currency-text';
 import { GlassCard } from '../../../../components/ui/glass-card';
 import { useTheme } from '../../../../providers/theme-provider';
@@ -13,47 +14,99 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   totalIncome,
   totalExpense,
 }) => {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   return (
-    <GlassCard style={styles.card}>
+    <GlassCard style={styles.cardContainer} contentStyle={styles.cardContent}>
+      {/* Kolom Kiri: Total Masuk */}
       <View style={styles.col}>
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>Total Masuk</Text>
-        <CurrencyText amount={totalIncome} colored showSign style={styles.income} />
+        <View style={styles.headerRow}>
+          <View
+            style={[
+              styles.iconCircle,
+              { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.18)' : '#D1FAE5' },
+            ]}
+          >
+            <ArrowDownLeft size={13} color="#10B981" />
+          </View>
+          <Text style={[styles.label, { color: theme.colors.textSecondary }]}>Total Masuk</Text>
+        </View>
+        <CurrencyText
+          amount={totalIncome}
+          style={[styles.amount, { color: isDark ? '#34D399' : '#059669' }]}
+        />
       </View>
-      <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+
+      {/* Garis Pemisah Tengah */}
+      <View
+        style={[
+          styles.divider,
+          { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)' },
+        ]}
+      />
+
+      {/* Kolom Kanan: Total Keluar */}
       <View style={styles.col}>
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>Total Keluar</Text>
-        <CurrencyText amount={-totalExpense} colored showSign style={styles.expense} />
+        <View style={styles.headerRow}>
+          <View
+            style={[
+              styles.iconCircle,
+              { backgroundColor: isDark ? 'rgba(239, 68, 68, 0.18)' : '#FEE2E2' },
+            ]}
+          >
+            <ArrowUpRight size={13} color="#EF4444" />
+          </View>
+          <Text style={[styles.label, { color: theme.colors.textSecondary }]}>Total Keluar</Text>
+        </View>
+        <CurrencyText
+          amount={totalExpense}
+          style={[styles.amount, { color: isDark ? '#F87171' : '#DC2626' }]}
+        />
       </View>
     </GlassCard>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
+  cardContainer: {
+    marginBottom: 12,
+    borderRadius: 16,
+  },
+  cardContent: {
     flexDirection: 'row',
-    padding: 16,
-    marginBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
   },
   col: {
     flex: 1,
-    alignItems: 'center',
   },
-  divider: {
-    width: 1,
-    height: '100%',
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 6,
+  },
+  iconCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   label: {
     fontSize: 12,
-    marginBottom: 4,
+    fontWeight: '500',
   },
-  income: {
+  amount: {
     fontSize: 16,
     fontWeight: '700',
+    letterSpacing: -0.2,
   },
-  expense: {
-    fontSize: 16,
-    fontWeight: '700',
+  divider: {
+    width: 1,
+    height: 38,
+    marginHorizontal: 12,
   },
 });

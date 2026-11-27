@@ -64,6 +64,9 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({
       <CurrencyText
         amount={totalBalance}
         currencyCode={currencyCode}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
         style={{ fontSize: 32, fontWeight: '800', letterSpacing: -0.5 }}
       />
 

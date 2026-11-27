@@ -1,6 +1,7 @@
 import { AccountBalanceView } from '../../../types/database.types';
 import { CurrencyTotal } from '../../../utils/transaction';
 import { TransactionWithDetails } from '../../transactions/types/transaction.types';
+import { BarChartItem } from '../../../components/charts/bar-chart';
 
 export interface DashboardSummary {
   primaryCurrency: string;
@@ -12,4 +13,5 @@ export interface DashboardSummary {
   monthlyTransactionCount: number;
   recentTransactions: TransactionWithDetails[];
   accountBalances: AccountBalanceView[];
+  weeklyCashFlow?: BarChartItem[];
 }
