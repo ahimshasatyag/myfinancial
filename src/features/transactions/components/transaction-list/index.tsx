@@ -7,19 +7,15 @@ import { EmptyState } from '../../../../components/common/empty-state';
 import { ErrorState } from '../../../../components/common/error-state';
 import { DateText } from '../../../../components/common/date-text';
 import { TransactionWithDetails } from '../../types/transaction.types';
-import { AccountType } from '../../../../types/database.types';
 import { groupTransactionsByDate } from '../../../../utils/transaction';
 import { useTheme } from '../../../../providers/theme-provider';
 import { ROUTES } from '../../../../constants/routes';
 
-const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
-  cash: 'Tunai',
-  bank: 'Bank',
-  e_wallet: 'E-Wallet',
-  credit_card: 'Kartu Kredit',
-  investment: 'Investasi',
-  other: 'Lainnya',
-};
+interface AccountTransactionGroup {
+  accountId: string;
+  accountName: string;
+  items: TransactionWithDetails[];
+}
 
 export interface TransactionListProps {
   transactions: TransactionWithDetails[];
@@ -77,78 +73,88 @@ export const TransactionList: React.FC<TransactionListProps> = ({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 120 }}
       renderItem={({ item: group }) => {
-        const accountTypes = Array.from(
-          new Set(
-            group.items
-              .map((tx) => tx.accounts?.account_type)
-              .filter((t): t is AccountType => Boolean(t))
-          )
-        );
+        // Kelompokkan transaksi pada tanggal ini berdasarkan account_id dengan label dari accounts.name
+        const accountMap = new Map<string, AccountTransactionGroup>();
+        for (const tx of group.items) {
+          const accountId = tx.accounts?.id || tx.account_id || 'unknown';
+          const accountName = tx.accounts?.name || tx.account_name || 'Tanpa Akun';
+          const existing = accountMap.get(accountId);
+          if (existing) {
+            existing.items.push(tx);
+          } else {
+            accountMap.set(accountId, {
+              accountId,
+              accountName,
+              items: [tx],
+            });
+          }
+        }
+        const accountGroups = Array.from(accountMap.values());
 
         return (
           <View className="mb-4">
-            <View className="px-1 mb-2">
-              <View className="flex-row items-center justify-between">
-                <DateText
-                  date={group.date}
-                  format="long"
-                  style={{
-                    fontSize: 12,
-                    fontWeight: '600',
-                    color: theme.colors.textSecondary,
-                  }}
-                />
-                <Text className="text-xs font-medium" style={{ color: theme.colors.textMuted }}>
-                  {group.items.length} transaksi
-                </Text>
-              </View>
-
-              {accountTypes.length > 0 ? (
-                <View className="flex-row flex-wrap gap-1.5 mt-1.5">
-                  {accountTypes.map((type) => (
-                    <View
-                      key={type}
-                      className="px-2.5 py-1 rounded-full border"
-                      style={{
-                        backgroundColor: theme.colors.cardMuted,
-                        borderColor: theme.colors.border,
-                      }}
-                    >
-                      <Text
-                        className="text-[14px] font-bold"
-                        style={{ color: theme.colors.textPrimary }}
-                      >
-                        {ACCOUNT_TYPE_LABELS[type] || type}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              ) : null}
+            <View className="flex-row items-center justify-between px-1 mb-2">
+              <DateText
+                date={group.date}
+                format="long"
+                style={{
+                  fontSize: 12,
+                  fontWeight: '600',
+                  color: theme.colors.textSecondary,
+                }}
+              />
+              <Text className="text-xs font-medium" style={{ color: theme.colors.textMuted }}>
+                {group.items.length} transaksi
+              </Text>
             </View>
 
-            <GlassCard contentStyle={{ padding: 0 }}>
-              {group.items.map((tx, idx) => (
-                <View key={tx.id}>
-                  <TransactionCard
-                    title={tx.title}
-                    amount={Number(tx.amount)}
-                    currencyCode={tx.currency_code}
-                    type={tx.transaction_type}
-                    status={tx.status}
-                    date={tx.transaction_date}
-                    accountName={tx.accounts?.name}
-                    categoryName={tx.categories?.name}
-                    onPress={() => router.push(ROUTES.TRANSACTIONS.DETAIL(tx.id) as any)}
-                  />
-                  {idx < group.items.length - 1 && (
-                    <View
-                      className="h-[1px] w-full"
-                      style={{ backgroundColor: theme.colors.border }}
-                    />
-                  )}
+            {accountGroups.map((accGroup, accIdx) => (
+              <View
+                key={accGroup.accountId}
+                className={accIdx < accountGroups.length - 1 ? 'mb-3' : undefined}
+              >
+                <View className="flex-row items-center justify-between px-1 mb-1.5">
+                  <Text
+                    className="text-[13px] font-bold"
+                    style={{ color: theme.colors.textPrimary }}
+                  >
+                    {accGroup.accountName}
+                  </Text>
+                  {accountGroups.length > 1 ? (
+                    <Text
+                      className="text-[11px] font-medium"
+                      style={{ color: theme.colors.textMuted }}
+                    >
+                      {accGroup.items.length} transaksi
+                    </Text>
+                  ) : null}
                 </View>
-              ))}
-            </GlassCard>
+
+                <GlassCard contentStyle={{ padding: 0 }}>
+                  {accGroup.items.map((tx, idx) => (
+                    <View key={tx.id}>
+                      <TransactionCard
+                        title={tx.title}
+                        amount={Number(tx.amount)}
+                        currencyCode={tx.currency_code}
+                        type={tx.transaction_type}
+                        status={tx.status}
+                        date={tx.transaction_date}
+                        accountName={tx.accounts?.name}
+                        categoryName={tx.categories?.name}
+                        onPress={() => router.push(ROUTES.TRANSACTIONS.DETAIL(tx.id) as any)}
+                      />
+                      {idx < accGroup.items.length - 1 && (
+                        <View
+                          className="h-[1px] w-full"
+                          style={{ backgroundColor: theme.colors.border }}
+                        />
+                      )}
+                    </View>
+                  ))}
+                </GlassCard>
+              </View>
+            ))}
           </View>
         );
       }}

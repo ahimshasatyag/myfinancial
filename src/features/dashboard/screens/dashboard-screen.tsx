@@ -16,7 +16,6 @@ import { BalanceCard } from '../components/balance-card';
 import { GoalsPreview } from '../components/goals-preview';
 import { QuickActions } from '../components/quick-actions';
 import { RecentTransactions } from '../components/recent-transactions';
-import { SpendingInsight } from '../components/spending-insight';
 import { useDashboard } from '../hooks/use-dashboard';
 
 export const DashboardScreen: React.FC = () => {
@@ -93,11 +92,6 @@ export const DashboardScreen: React.FC = () => {
 
         <GoalsPreview goals={goals || []} />
         <QuickActions />
-        <SpendingInsight
-          income={data?.monthlyIncome || 0}
-          expense={data?.monthlyExpense || 0}
-          transactionCount={data?.monthlyTransactionCount || 0}
-        />
         <RecentTransactions transactions={data?.recentTransactions || []} />
         <View className="h-20" />
       </ScrollView>
