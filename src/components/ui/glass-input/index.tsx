@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputProps,
   View,
+  TextInput,
+  Text,
+  StyleSheet,
+  TextInputProps,
   ViewStyle,
+  StyleProp,
 } from 'react-native';
 import { useTheme } from '../../../providers/theme-provider';
 
@@ -50,10 +50,10 @@ export const GlassInput: React.FC<GlassInputProps> = ({
             borderColor: error
               ? theme.colors.danger
               : isFocused
-                ? isDark
-                  ? '#FFFFFF'
-                  : '#111111'
-                : theme.colors.border,
+              ? isDark
+                ? '#FFFFFF'
+                : '#111111'
+              : theme.colors.border,
             borderRadius: theme.radius.lg,
           },
         ]}

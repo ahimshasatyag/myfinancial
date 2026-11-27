@@ -1,14 +1,14 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Moon, DollarSign, Bell, Shield, Database, LogOut, ChevronRight, User } from 'lucide-react-native';
+import { Bell, ChevronRight, Database, DollarSign, LogOut, Moon, Shield } from 'lucide-react-native';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScreenContainer } from '../../../components/layout/screen-container';
 import { ScreenHeader } from '../../../components/layout/screen-header';
-import { GlassCard } from '../../../components/ui/glass-card';
 import { AppAvatar } from '../../../components/ui/app-avatar';
+import { GlassCard } from '../../../components/ui/glass-card';
+import { ROUTES } from '../../../constants/routes';
 import { useAuth } from '../../../providers/auth-provider';
 import { useTheme } from '../../../providers/theme-provider';
-import { ROUTES } from '../../../constants/routes';
 
 export const SettingsScreen: React.FC = () => {
   const router = useRouter();
